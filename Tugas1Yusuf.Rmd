@@ -1,0 +1,75 @@
+---
+title: "Tugas1 Analysis Deret Waktu"
+author: "Yusuf Sohibul Falah"
+date: "2025-04-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Nomor 1 Dataset LakeHuron
+library(datasets)
+help('datasets')
+plot(LakeHuron, ylab = "Ketinggian (feet)", xlab = "Tahun",col='blue')
+lines(lowess(LakeHuron),col='red',lwd=2)
+```
+#PlotLakeHuron
+#Dari plot, terlihat bahwa permukaan danau berfluktuasi setiap tahun, dengan tidak terlalu banyak variasi drastis
+#Nilai berkisar antara 575 hingga 581 kaki, menunjukkan perubahan yang relatif stabil dalam jangka panjang
+#Hasil ini mengungkap adanya tren menurun secara perlahan, terutama di paruh kedua abad ke-20.
+#Ini bisa mengindikasikan bahwa rata-rata ketinggian air mengalami penurunan jangka panjang, meskipun fluktuasi tetap terjadi dari tahun ke tahun
+
+```{r}
+#Mengkonversi ke time series
+ts_data <- ts(LakeHuron, start = 1875, frequency = 4)
+dekomposisi<-decompose(ts_data,type = 'additive')
+plot(dekomposisi)
+
+```
+
+#Dekomposisi Aditive
+#Dekomposisi ini dilakukan setelah memaksa dataset menjadi time series musiman (kuartalan) hanya agar fungsi decompose() bisa dijalankan. Maka, hasil komponen musiman tidak memiliki makna sesungguhnya karena data aslinya tahunan.
+
+#Trend
+#Komponen tren menunjukkan penurunan bertahap yang konsisten dengan hasil pemulusan sebelumnya (LOWESS)
+#Ini memperkuat indikasi adanya penurunan jangka panjang dalam tinggi muka air.
+#Seasonal
+#Komponen musiman muncul sebagai nilai-nilai periodik, tapi dalam konteks ini tidak bermakna nyata, karena data LakeHuron tidak memiliki musiman (bukan data bulanan/kuartalan).
+#Komponen acak menunjukkan fluktuasi dari tahun ke tahun yang tidak dijelaskan oleh tren (dan “musiman” yang sebenarnya palsu).
+
+
+#Kesimpulan
+#Permukaan Danau Huron dari 1875 hingga 1972 cenderung stabil tetapi sedikit menurun seiring waktu.
+#Tidak ada pola musiman yang nyata, karena data bersifat tahunan.
+#Fluktuasi jangka pendek tampak wajar dan mencerminkan dinamika alamiah dari danau besar
+
+
+
+```{r}
+#NOMOR 2 DATASET AIRPASSENGERS
+library(datasets)
+help("datasets")
+plot(AirPassengers,xlab='Tahun',ylab='JUmlah.Penumpang')
+
+
+#spesifikasi
+# Data bawaan
+data(AirPassengers)
+# Membuat vektor huruf bulan (JFMAMJJASOND) sebanyak panjang data
+bulan <- rep(c("J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"), length.out = length(AirPassengers))
+# Plot time series
+plot(AirPassengers, type = "o", pch = 20, xlab = "Tahun", ylab = "Jumlah Penumpang")
+# Tambahkan label bulan di setiap titik
+text(time(AirPassengers), AirPassengers, labels = bulan, pos = 3, cex = 0.6)
+
+
+# Mengkonversi ke time series  (dekomposisi)
+ts_data<-AirPassengers
+dekomposisi<-decompose(ts_data, type='additive')
+plot(dekomposisi)
+
+```
+```{r}
